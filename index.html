@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Satyansh Mani — Medicine, translated through tech.">
+  <title>Satyansh Mani — Personal Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#0B0C0E; --paper:#EDE8DC; --signal:#FF2BAE; --rule:rgba(237,232,220,.20); --muted:rgba(237,232,220,.60); }
+    * { box-sizing:border-box; }
+    html { background:var(--ink); scroll-behavior:auto; }
+    body { margin:0; background:var(--ink); color:var(--paper); font-family:Syne,Arial,sans-serif; overflow-x:hidden; }
+    a { color:inherit; text-decoration:none; }
+    .site { min-height:100svh; position:relative; isolation:isolate; }
+    .grain { pointer-events:none; position:fixed; inset:0; z-index:10; opacity:.13; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E"); mix-blend-mode:screen; }
+    .cursor { position:fixed; width:12px; height:12px; border:1px solid var(--paper); border-radius:50%; pointer-events:none; z-index:20; transform:translate(-50%,-50%); transition:width .25s,height .25s,background .25s; }
+    .cursor.is-active { width:34px; height:34px; background:var(--paper); border-color:var(--paper); }
+    .topbar { height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 5vw; border-bottom:1px solid var(--rule); position:absolute; inset:0 0 auto; z-index:5; }
+    .mark, .nav, .kicker, .spec, .button, .folio { font:500 11px/1.1 "JetBrains Mono",monospace; letter-spacing:.02em; text-transform:uppercase; }
+    .mark { font:700 22px/1 Syne,sans-serif; letter-spacing:-.08em; }
+    .mark i { color:var(--paper); font-style:normal; }
+    .nav { display:none; gap:24px; color:var(--muted); }
+    .hero { height:100svh; min-height:100svh; padding:0 5vw; position:relative; overflow:clip; }
+    .hero::before { content:""; position:absolute; inset:0 var(--gutter); z-index:-1; background-image:linear-gradient(90deg, transparent 0, transparent calc(25% - .5px), var(--rule) 25%, transparent calc(25% + .5px), transparent calc(50% - .5px), var(--rule) 50%, transparent calc(50% + .5px), transparent calc(75% - .5px), var(--rule) 75%, transparent calc(75% + .5px)); opacity:.45; }
+    .eyebrow { position:absolute; z-index:3; inset:14svh 5vw auto; display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+    .kicker { color:var(--paper); }
+    .folio { color:var(--muted); white-space:nowrap; }
+    .title-wrap { position:absolute; z-index:1; top:26svh; left:5vw; right:5vw; min-height:0; padding:0; }
+    .name { margin:0; text-align:center; text-transform:uppercase; font-size:clamp(3rem,10.6vw,22rem); line-height:.9; letter-spacing:-.095em; font-weight:800; white-space:nowrap; position:relative; z-index:1; }
+    .name-line { display:block; overflow:visible; padding:0; }
+    .name-line > span { display:block; }
+    .name .mani { display:none; }
+    .hero-mani { position:absolute; z-index:3; left:10vw; top:54svh; margin:0; color:var(--signal); font:400 italic clamp(2.5rem,9vw,14rem)/.8 "Instrument Serif",serif; letter-spacing:-.07em; }
+    .portrait { position:absolute; z-index:2; left:50%; right:auto; bottom:0; width:auto; height:82svh; margin:0; display:block; transform:translateX(-50%); pointer-events:none; }
+    .portrait::before { content:"FRAME_01 / DELHI"; position:absolute; z-index:3; bottom:0; left:0; width:158px; padding:9px 0 0; border-top:1px solid var(--rule); color:var(--paper); font:500 10px/1 "JetBrains Mono",monospace; }
+    .portrait img { display:block; width:auto; max-width:90vw; height:100%; object-fit:contain; object-position:bottom center; filter:grayscale(1) contrast(1.08) brightness(.96); }
+    .specs { position:absolute; left:5vw; top:14svh; z-index:3; display:grid; gap:8px; color:var(--muted); }
+    .spec { font-size:10px; }
+    .spec strong { color:var(--paper); font-weight:500; }
+    .spec .dot { color:var(--signal); font-size:14px; vertical-align:-1px; }
+    .bottom { position:absolute; left:5vw; bottom:5svh; z-index:3; display:flex; flex-direction:column; gap:16px; align-items:flex-start; }
+    .intro { margin:0; max-width:28ch; font-size:clamp(.7rem,.9vw,1rem); line-height:1.35; letter-spacing:-.04em; }
+    .intro em { color:var(--paper); font-family:"Instrument Serif",Georgia,serif; font-size:1.2em; font-weight:400; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; }
+    .button { display:inline-flex; min-height:46px; align-items:center; gap:20px; padding:0 16px; border:1px solid var(--paper); transition:background .25s,color .25s,transform .25s; }
+    .button:first-child { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .button:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .button b { font:500 18px/1 Arial,sans-serif; }
+    .side-note { position:absolute; z-index:3; right:5vw; bottom:5svh; max-width:20ch; font:500 clamp(.7rem,.9vw,1rem)/1.45 "JetBrains Mono",monospace; color:var(--muted); text-transform:uppercase; }
+    @media (min-width:600px) and (max-width:1023px) { .portrait { height:70svh; } .name { font-size:clamp(3rem,12vw,12rem); } }
+    @media (max-width:599px) { .topbar { height:12svh; } .nav { display:none; } .hero { height:auto; min-height:100svh; padding:0 5vw 7svh; overflow:visible; } .eyebrow { position:relative; inset:auto; padding-top:16svh; } .title-wrap { position:relative; top:auto; left:auto; right:auto; height:56svh; margin-top:8svh; } .name { text-align:left; font-size:clamp(3rem,11.2vw,6rem); } .hero-mani { position:absolute; left:5vw; top:44svh; font-size:clamp(2.5rem,16vw,7rem); } .portrait { height:55svh; bottom:auto; top:25svh; } .specs { top:22svh; } .bottom { position:relative; left:auto; bottom:auto; margin-top:0; padding-top:0; } .side-note { display:none; } .folio { display:none; } .cursor { display:none; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important; } .cursor { display:none; } }
+
+    /* Sections 02–03 */
+    .content-section { --section-gutter:24px; padding:96px var(--section-gutter); border-top:1px solid var(--rule); }
+    .section-label { display:flex; align-items:center; gap:12px; margin:0 0 48px; color:var(--muted); font:500 11px/1 "JetBrains Mono",monospace; letter-spacing:.02em; text-transform:uppercase; }
+    .section-label::before { content:""; width:48px; height:1px; background:var(--rule); transform-origin:left; }
+    .about-layout { display:grid; gap:48px; }
+    .about-statement { max-width:1050px; margin:0; font:800 clamp(2.85rem,6.7vw,7.4rem)/.98 Syne,Arial,sans-serif; letter-spacing:-.08em; }
+    .about-statement em, .capability-heading em { color:var(--signal); font-family:"Instrument Serif",Georgia,serif; font-weight:400; font-style:italic; letter-spacing:-.07em; }
+    .about-aside { display:grid; gap:32px; max-width:405px; }
+    .about-copy { margin:0; color:var(--muted); font:400 clamp(1.05rem,1.55vw,1.35rem)/1.45 Syne,Arial,sans-serif; letter-spacing:-.035em; }
+    .about-facts { display:grid; grid-template-columns:1fr; gap:14px; margin:0; padding-top:24px; border-top:1px solid var(--rule); }
+    .about-facts div { display:grid; grid-template-columns:82px 1fr; gap:12px; }
+    .about-facts dt, .about-facts dd { margin:0; font:500 10px/1.35 "JetBrains Mono",monospace; text-transform:uppercase; }
+    .about-facts dt { color:var(--muted); }
+    .about-facts dd { color:var(--paper); }
+    .capability-head { display:flex; align-items:baseline; justify-content:space-between; gap:24px; margin-bottom:48px; }
+    .capability-heading { margin:0; font:800 clamp(2.85rem,6.2vw,7rem)/.94 Syne,Arial,sans-serif; letter-spacing:-.08em; }
+    .capability-grid { display:grid; grid-template-columns:1fr; border-top:1px solid var(--rule); border-left:1px solid var(--rule); }
+    .capability-cell { min-height:280px; padding:28px; display:flex; flex-direction:column; align-items:flex-start; border-right:1px solid var(--rule); border-bottom:1px solid var(--rule); background:transparent; transition:background .25s ease; }
+    .capability-cell:hover { background:rgba(237,232,220,.055); }
+    .capability-icon { width:30px; height:30px; margin-bottom:auto; color:var(--paper); transition:transform .25s ease; }
+    .capability-cell:hover .capability-icon { transform:translateX(4px); }
+    .capability-icon svg { width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+    .capability-tag { margin:30px 0 14px; color:var(--muted); font:500 10px/1 "JetBrains Mono",monospace; text-transform:uppercase; }
+    .capability-title { margin:0 0 12px; font:700 clamp(1.45rem,2.1vw,2.15rem)/1 Syne,Arial,sans-serif; letter-spacing:-.06em; }
+    .capability-description { max-width:330px; margin:0; color:var(--muted); font:400 1rem/1.42 Syne,Arial,sans-serif; letter-spacing:-.03em; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .section-intro { display:grid; gap:40px; margin-bottom:48px; }
+    .section-intro .about-copy { justify-self:start; }
+    .work-card { display:grid; border:1px solid var(--rule); }
+    .work-visual { min-height:300px; position:relative; overflow:hidden; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M-5 20 20-5M5 25 25 5' stroke='%23EDE8DC' stroke-opacity='.09' fill='none'/%3E%3C/svg%3E"); }
+    .work-circle { position:absolute; border:1px solid var(--paper); border-radius:50%; width:62%; aspect-ratio:1; left:18%; top:16%; }
+    .work-circle.pink { border-color:var(--signal); width:40%; left:43%; top:42%; }
+    .work-code { position:absolute; left:20px; bottom:18px; color:var(--muted); font:500 10px/1 "JetBrains Mono",monospace; }
+    .work-copy { padding:32px; display:flex; flex-direction:column; justify-content:center; border-top:1px solid var(--rule); }
+    .eyebrow-mono { color:var(--muted); font:500 10px/1.4 "JetBrains Mono",monospace; text-transform:uppercase; }
+    .work-title { margin:20px 0 16px; font:800 clamp(2rem,4vw,4rem)/.95 Syne,sans-serif; letter-spacing:-.07em; }
+    .work-description { max-width:480px; margin:0; color:var(--muted); font:400 1.05rem/1.45 Syne,sans-serif; }
+    .work-meta { display:flex; gap:32px; flex-wrap:wrap; margin-top:32px; }
+    .work-meta span { display:grid; gap:5px; color:var(--paper); font:500 10px/1.35 "JetBrains Mono",monospace; }
+    .work-meta b { color:var(--muted); font-weight:500; }
+    .coming { margin:24px 0 0; padding:18px 0; border-top:1px dashed var(--rule); border-bottom:1px dashed var(--rule); color:var(--muted); font:500 11px/1 "JetBrains Mono",monospace; text-transform:uppercase; }
+    .timeline-title { margin:0 0 56px; font:800 clamp(3rem,7vw,7.5rem)/.92 Syne,sans-serif; letter-spacing:-.09em; }
+    .timeline-title em { color:var(--signal); font:400 italic 1em/1 "Instrument Serif",serif; letter-spacing:-.07em; }
+    .timeline { position:relative; display:grid; gap:0; }
+    .timeline::before,.timeline-progress { content:""; position:absolute; left:8px; top:0; width:1px; height:100%; background:rgba(237,232,220,.3); transform-origin:top; }
+    .timeline-progress { z-index:1; background:var(--paper); transform:scaleY(0); }
+    .timeline-entry { position:relative; display:grid; grid-template-columns:32px 1fr; gap:20px; padding:0 0 48px; }
+    .timeline-node { position:relative; z-index:2; width:17px; height:17px; margin-top:2px; border:1px solid var(--paper); background:var(--ink); transition:background .35s ease; }
+    .timeline-entry.is-active .timeline-node { background:var(--signal); border-color:var(--signal); }
+    .timeline-entry:last-child.is-active .timeline-node { animation:pulse 1.8s ease-in-out infinite; }
+    .timeline-label,.timeline-chip { color:var(--muted); font:500 10px/1.35 "JetBrains Mono",monospace; text-transform:uppercase; }
+    .timeline-entry h3 { margin:12px 0; font:700 clamp(1.5rem,3vw,3rem)/1 Syne,sans-serif; letter-spacing:-.06em; }
+    .timeline-entry p { max-width:720px; margin:0; color:var(--muted); font:400 1rem/1.45 Syne,sans-serif; }
+    .timeline-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+    .timeline-chip { display:inline-block; padding:8px; border:1px solid var(--rule); color:var(--paper); }
+    @keyframes pulse { 50% { transform:scale(1.35); } }
+    .contact-grid { display:grid; gap:48px; }
+    .contact-title { margin:0 0 32px; font:800 clamp(3rem,7vw,7.5rem)/.92 Syne,sans-serif; letter-spacing:-.09em; }
+    .contact-title em { color:var(--signal); font:400 italic 1em/1 "Instrument Serif",serif; letter-spacing:-.07em; }
+    .contact-links { border-top:1px solid var(--rule); }
+    .contact-link { min-height:64px; display:grid; grid-template-columns:28px 1fr auto; align-items:center; gap:14px; border-bottom:1px solid var(--rule); font:700 clamp(1.1rem,2vw,1.6rem)/1 Syne,sans-serif; }
+    .contact-link svg { width:22px; height:22px; fill:none; stroke:var(--paper); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+    .contact-link b { color:var(--signal); font:400 22px/1 Arial,sans-serif; transition:transform .25s; }
+    .contact-link:hover b { transform:translate(4px,-4px); }
+    .footer { padding:0 var(--section-gutter) 24px; border-top:1px solid var(--rule); }
+    .heartbeat { width:100%; height:88px; display:block; }
+    .heartbeat path { fill:none; stroke:var(--paper); stroke-width:1; stroke-dasharray:1200; stroke-dashoffset:1200; }
+    .footer.is-drawn .heartbeat path { animation:draw 2s ease forwards; }
+    .footer-meta { display:flex; justify-content:space-between; gap:16px; color:var(--muted); font:500 10px/1 "JetBrains Mono",monospace; text-transform:uppercase; }
+    @keyframes draw { to { stroke-dashoffset:0; } }
+    @media (min-width:700px) { .content-section { --section-gutter:48px; padding-top:128px; padding-bottom:128px; } .about-layout { grid-template-columns:minmax(0,1.85fr) minmax(260px,.75fr); align-items:end; gap:8vw; } .capability-grid { grid-template-columns:repeat(2,1fr); } }
+    @media (min-width:1100px) { .content-section { --section-gutter:5.5vw; } .about-layout { gap:11vw; } .capability-grid { grid-template-columns:repeat(3,1fr); } .capability-cell { min-height:316px; padding:32px; } }
+    @media (min-width:700px) { .section-intro { grid-template-columns:1fr minmax(300px,.62fr); align-items:end; } .section-intro .about-copy { justify-self:end; } .work-card { grid-template-columns:1fr 1fr; } .work-copy { border-top:0; border-left:1px solid var(--rule); } .contact-grid { grid-template-columns:1fr 1fr; align-items:end; gap:8vw; } }
+  </style>
+</head>
+<body>
+  <main class="site">
+    <div class="grain" aria-hidden="true"></div><div class="cursor" aria-hidden="true"></div>
+    <header class="topbar"><a class="mark" href="#top" aria-label="Satyansh Mani home">SM<i>_</i></a><nav class="nav" aria-label="Primary"><a href="#about">About</a><a href="#work">Work</a><a href="#contact">Contact</a></nav></header>
+    <section class="hero" id="top" aria-labelledby="hero-name">
+      <div class="eyebrow"><span class="kicker">Biomedical science × technology × design</span><span class="folio">Personal archive / v.01</span></div>
+      <div class="title-wrap">
+        <div class="specs" aria-label="Profile specifications"><span class="spec">SUBJECT / <strong>SATYANSH MANI</strong></span><span class="spec">COORD / <strong>28.61 N, 77.20 E</strong></span><span class="spec">STATUS / <strong><i class="dot">●</i> OPEN TO COLLABORATE</strong></span></div>
+        <h1 class="name" id="hero-name"><span class="name-line"><span>Satyansh</span></span><span class="name-line mani"><span>Mani</span></span></h1>
+      </div>
+      <p class="hero-mani" aria-hidden="true">Mani</p>
+      <div class="bottom"><div><p class="intro">A field note from someone learning how care can become more <em>capable, accessible, and human.</em></p></div><div class="actions"><a class="button magnetic" href="#work">Explore work <b>↘</b></a><a class="button magnetic" href="#contact">Contact <b>↗</b></a></div></div>
+      <div class="side-note">Research thread<br><strong>Medicine, translated through tech.</strong></div>
+      <figure class="portrait"><img data-parallax src="DSCF7283-removebg-preview.png" alt="Cut-out portrait of Satyansh Mani in a blue suit"><figcaption class="sr-only">Portrait of Satyansh Mani</figcaption></figure>
+    </section>
+    <section class="content-section about-section" id="about" aria-labelledby="about-title">
+      <p class="section-label">01 / About</p>
+      <div class="about-layout">
+        <h2 class="about-statement" id="about-title">I’m studying how the body works, and learning how technology can help care become <em>more capable, accessible and human.</em></h2>
+        <div class="about-aside">
+          <p class="about-copy">A biomedical science student following the questions where care, technology, and clear design can meet.</p>
+          <dl class="about-facts">
+            <div><dt>Based in</dt><dd>Delhi</dd></div>
+            <div><dt>Studying</dt><dd>Biomedical Science</dd></div>
+            <div><dt>Focus</dt><dd>Medicine × Tech</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section capability-section" id="capability" aria-labelledby="capability-title">
+      <p class="section-label">02 / Capability</p>
+      <div class="capability-head"><h2 class="capability-heading" id="capability-title">A <em>growing</em> toolkit.</h2></div>
+      <div class="capability-grid">
+        <article class="capability-cell"><div class="capability-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M10 4h8l3 3v5l-3 3H9L6 12V7zM11 15v13M20 15v13M11 21h9"/></svg></div><p class="capability-tag">Learning</p><h3 class="capability-title">Python</h3><p class="capability-description">Learning practical programming for logic, data, and small useful tools.</p></article>
+        <article class="capability-cell"><div class="capability-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><ellipse cx="16" cy="7" rx="9" ry="3"/><path d="M7 7v9c0 1.7 4 3 9 3s9-1.3 9-3V7M7 16v9c0 1.7 4 3 9 3s9-1.3 9-3v-9"/></svg></div><p class="capability-tag">Learning</p><h3 class="capability-title">SQL</h3><p class="capability-description">Building a basic understanding of how useful information is structured and queried.</p></article>
+        <article class="capability-cell"><div class="capability-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M10 4h6v12h-6a6 6 0 0 1 0-12zM16 4h6a6 6 0 0 1 0 12h-6zM10 16h6v12h-6a6 6 0 0 1 0-12zM16 16h6a6 6 0 0 1 0 12h-6z"/></svg></div><p class="capability-tag">Familiar</p><h3 class="capability-title">Figma</h3><p class="capability-description">Using basic Figma to shape clear visual directions and early interface ideas.</p></article>
+        <article class="capability-cell"><div class="capability-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="5" y="7" width="17" height="18" rx="1"/><path d="m22 13 5-3v12l-5-3zM9 12h9M9 17h6"/></svg></div><p class="capability-tag">Familiar</p><h3 class="capability-title">CapCut</h3><p class="capability-description">Creating short-form social content with clear edits and a focused message.</p></article>
+        <article class="capability-cell"><div class="capability-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 7h20v14H14l-5 5v-5H6zM11 13h10M11 17h6"/></svg></div><p class="capability-tag">Practicing</p><h3 class="capability-title">Social Media &amp; PR</h3><p class="capability-description">Practicing content and outreach that help community work travel further.</p></article>
+        <article class="capability-cell"><div class="capability-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="12" cy="11" r="4"/><circle cx="22" cy="13" r="3"/><path d="M5 27c0-5 3-8 7-8s7 3 7 8M19 22c1-2 3-3 5-3 2 0 3 1 4 3"/></svg></div><p class="capability-tag">Practicing</p><h3 class="capability-title">Community Engagement</h3><p class="capability-description">Working with people and schools to support community drives on the ground.</p></article>
+      </div>
+    </section>
+    <section class="content-section work-section" id="work" aria-labelledby="work-title">
+      <div class="section-intro"><div><p class="section-label">03 / Work in the making</p><h2 class="capability-heading" id="work-title">Work in the <em>making.</em></h2></div><p class="about-copy">I’m early in my building journey, so this section is honest. It will grow as I take ideas from question to prototype.</p></div>
+      <article class="work-card"><div class="work-visual" aria-hidden="true"><span class="work-circle"></span><span class="work-circle pink"></span><span class="work-code">SM_01</span></div><div class="work-copy"><p class="eyebrow-mono">In progress / Personal build</p><h3 class="work-title">Personal Portfolio</h3><p class="work-description">A living digital identity documenting my interests, developing skills, and first steps toward medical technology.</p><div class="work-meta"><span><b>Role</b>Design &amp; content</span><span><b>Tools</b>HTML, CSS, JavaScript</span></div></div></article>
+      <p class="coming">More coming.</p>
+    </section>
+    <section class="content-section records-section" id="education" aria-labelledby="records-title">
+      <p class="section-label">04 / The path</p><h2 class="timeline-title" id="records-title">The path <em>so far.</em></h2>
+      <div class="timeline"><span class="timeline-progress" aria-hidden="true"></span>
+        <article class="timeline-entry"><span class="timeline-node" aria-hidden="true"></span><div><span class="timeline-label">School</span><h3>Science, PCB</h3><p>Vidya Bal Bhawan Sr. Sec. School.</p><div class="timeline-chips"><span class="timeline-chip">Class 10 / 92.4%</span><span class="timeline-chip">Class 12 / 89%</span></div></div></article>
+        <article class="timeline-entry"><span class="timeline-node" aria-hidden="true"></span><div><span class="timeline-label">Drop year</span><h3>NEET preparation</h3><p>A year spent focused on NEET before choosing my path.</p></div></article>
+        <article class="timeline-entry"><span class="timeline-node" aria-hidden="true"></span><div><span class="timeline-label">Entrance</span><h3>CUET</h3><p>Scored 99% and secured a seat at the University of Delhi.</p><div class="timeline-chips"><span class="timeline-chip">CUET / 99%</span></div></div></article>
+        <article class="timeline-entry"><span class="timeline-node" aria-hidden="true"></span><div><span class="timeline-label">College / Year 1</span><h3>B.Sc. Biomedical Science</h3><p>Bhaskaracharya College of Applied Sciences, University of Delhi.</p><div class="timeline-chips"><span class="timeline-chip">Current</span></div></div></article>
+        <article class="timeline-entry"><span class="timeline-node" aria-hidden="true"></span><div><span class="timeline-label">Experience / Sep 2025 to present</span><h3>Social Media &amp; PR Intern</h3><p>Prabhav Trust. Creating content for social channels, connecting with schools for community drives, and volunteering on the ground.</p></div></article>
+      </div>
+    </section>
+    <section class="content-section contact-section" id="contact" aria-labelledby="contact-title"><div class="contact-grid"><div><p class="section-label">05 / Contact</p><h2 class="contact-title" id="contact-title">Have an idea?<br>Let’s <em>connect.</em></h2><a class="button magnetic" href="https://www.linkedin.com/in/satyansh-mani-538608336/" target="_blank" rel="noreferrer">Message on LinkedIn <b>↗</b></a></div><nav class="contact-links" aria-label="Social links"><a class="contact-link" href="https://www.linkedin.com/in/satyansh-mani-538608336/" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24"><path d="M5 9v10M5 5v.1M10 19v-6a4 4 0 0 1 8 0v6M10 12v7"/></svg><span>LinkedIn</span><b>↗</b></a><a class="contact-link" href="https://github.com/SatyaScience" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-4a3.5 3.5 0 0 0-1-3c3.4-.4 7-1.7 7-7.5a5.8 5.8 0 0 0-1.5-4A5.4 5.4 0 0 0 20.4.7S19.1.3 16 2.4a13.4 13.4 0 0 0-7 0C5.9.3 4.6.7 4.6.7a5.4 5.4 0 0 0-.1 2.8A5.8 5.8 0 0 0 3 7.5c0 5.8 3.6 7.1 7 7.5a3.5 3.5 0 0 0-1 2.7v4"/></svg><span>GitHub</span><b>↗</b></a><a class="contact-link" href="https://www.youtube.com/@SatyanshMani" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24"><path d="M22 12s0-4-1-5-4-1-9-1-8 0-9 1-1 5-1 5 0 4 1 5 4 1 9 1 8 0 9-1 1-5 1-5zM10 9l5 3-5 3z"/></svg><span>YouTube</span><b>↗</b></a><a class="contact-link" href="https://www.instagram.com/satyascience.lab/" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg><span>Instagram</span><b>↗</b></a><a class="contact-link" href="mailto:satyascience.lab@gmail.com"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14"/><path d="m3 7 9 6 9-6"/></svg><span>Email</span><b>↗</b></a></nav></div></section>
+    <footer class="footer"><svg class="heartbeat" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-label="Heartbeat line becoming a circuit trace"><path d="M0 45h220l24-24 28 50 38-68 34 42h286l18-18 18 18h174l20-20 20 20h220l20-20 20 20h120"/></svg><div class="footer-meta"><span>© 2026 Satyansh Mani</span><span>Delhi, IN</span></div></footer>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script>
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce) {
+      const lenis = new Lenis({ lerp:.09, smoothWheel:true });
+      lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t=>lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.from('.name-line > span',{ yPercent:118, duration:1.25, ease:'expo.out', stagger:.13, delay:.12 });
+      gsap.from('.eyebrow, .specs, .bottom',{ opacity:0, y:16, duration:.8, stagger:.08, ease:'expo.out', delay:.35 });
+      gsap.to('[data-parallax]',{ yPercent:5, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:true }});
+      gsap.utils.toArray('.content-section').forEach(section=>gsap.from(section.children,{ opacity:0, y:24, duration:1, stagger:.1, ease:'expo.out', immediateRender:false, scrollTrigger:{ trigger:section, start:'top 78%', once:true }}));
+      gsap.utils.toArray('.timeline-entry').forEach(entry=>{ gsap.from(entry,{opacity:0,y:24,duration:1,ease:'expo.out',immediateRender:false,scrollTrigger:{trigger:entry,start:'top 82%',once:true,onEnter:()=>entry.classList.add('is-active')}}); });
+      gsap.to('.timeline-progress',{scaleY:1,ease:'none',scrollTrigger:{trigger:'.timeline',start:'top 75%',end:'bottom 65%',scrub:true}});
+      ScrollTrigger.create({trigger:'.footer',start:'top 85%',once:true,onEnter:()=>document.querySelector('.footer').classList.add('is-drawn')});
+      const refreshScroll=()=>ScrollTrigger.refresh();
+      if(document.fonts?.ready) document.fonts.ready.then(refreshScroll);
+      window.addEventListener('load',refreshScroll,{once:true});
+      document.querySelectorAll('.magnetic').forEach(button=>{ button.addEventListener('pointermove',e=>{ const r=button.getBoundingClientRect(), x=(e.clientX-r.left-r.width/2)*.12, y=(e.clientY-r.top-r.height/2)*.12; gsap.to(button,{x,y,duration:.35,ease:'power3.out'}); }); button.addEventListener('pointerleave',()=>gsap.to(button,{x:0,y:0,duration:.6,ease:'elastic.out(1,.45)'})); });
+      const cursor=document.querySelector('.cursor'); window.addEventListener('pointermove',e=>gsap.to(cursor,{x:e.clientX,y:e.clientY,duration:.14,overwrite:true})); document.querySelectorAll('a').forEach(a=>{a.addEventListener('pointerenter',()=>cursor.classList.add('is-active'));a.addEventListener('pointerleave',()=>cursor.classList.remove('is-active'));});
+    }
+  </script>
+</body>
+</html>
